@@ -1,0 +1,5239 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Boomplay Rest API",
+    "description": "This is documentation for boomplay REST API\n\n- For information about flow, visit [BoomPlay_flow](https://excalidraw.com/%C3%82%C2%A0%C3%AB%C2%9D%C2%BC%C3%AB%C2%8A%C2%94%C3%AA%C2%B2%C2%8C#json=feQ5K88tvJa7R40UufSaN,y3R-7LsdmSCE4EfmL5L4UQ).\n- Check out our [Docs](https://justdoju.notion.site/BoomPlay-docs-d209fb5dade24e7f926772c067aaa020?pvs=4)."
+  },
+  "basePath": "",
+  "tags": [
+    {
+      "name": "Member",
+      "description": "service users related endpoints"
+    },
+    {
+      "name": "Quest",
+      "description": " service quest related endpoints"
+    },
+    {
+      "name": "Quest-dao",
+      "description": "service quest-dao related endpoints"
+    },
+    {
+      "name": "Quest-category",
+      "description": "service quest-category related endpoints"
+    },
+    {
+      "name": "Season",
+      "description": "service season related endpoints"
+    },
+    {
+      "name": "Vote",
+      "description": "service dao vote related endpoints"
+    }
+  ],
+  "securityDefinitions": {},
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/member/": {
+      "post": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Create a new member",
+        "description": "Creates a new user on boomplay",
+        "responses": {
+          "200": {
+            "description": "Created Member"
+          },
+          "405": {
+            "description": "Validation Exception"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "wallet_address"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "$ref": "#/components/schemas/Member/properties/wallet_address"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/MemberCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/member/{wallet_address}": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Get the member info",
+        "description": "Fetch the member information",
+        "parameters": [
+          {
+            "name": "wallet_address",
+            "in": "path",
+            "description": "The address of the member",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {},
+                      "default": {
+                        "$ref": "#/components/examples/Member/value"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": ""
+                    },
+                    "error": {
+                      "type": "null",
+                      "default": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Get the member info",
+        "description": "Fetch the member information",
+        "parameters": [
+          {
+            "name": "wallet_address",
+            "in": "path",
+            "description": "The address of the member",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "requestBody": {
+          "description": "If send empty value, data will be removed",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Member name"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Member email address"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/member/{wallet_address}/delegate": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Update the member delegate tx",
+        "description": "After smart contract call, transaction hash update to our db",
+        "parameters": [
+          {
+            "name": "wallet_address",
+            "in": "path",
+            "description": "The address of the member",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "delegated_tx"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "$ref": "#/components/schemas/Member/properties/member_delegated_tx"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/MemberUpdateDelegate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/member/role": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Update the member role",
+        "description": "Admin can update the role of a member",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role updated successfully"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "wallet_address",
+                  "role"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "type": "string",
+                    "description": "The wallet address of the member"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "USER",
+                      "ADMIN"
+                    ],
+                    "description": "The new role for the member"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/UpdateMemberRole"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/member/archive": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Archive a member",
+        "description": "Admin can archive a member by their wallet address. Requires admin authentication.",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "wallet_address"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "type": "string",
+                    "description": "The wallet address of the member to be archived"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/MemberCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/member/unarchive": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Unarchive a member",
+        "description": "Admin can unarchive a previously archived member by their wallet address. Requires admin authentication.",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "wallet_address"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "type": "string",
+                    "description": "The wallet address of the member to be unarchived"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/MemberCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/member/lock": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Lock a member",
+        "description": "Admin can lock a member by their wallet address. This involves a smart contract call and a database update. Requires admin authentication.",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "202": {
+            "description": "Transaction success but DB Update Failed"
+          },
+          "400": {
+            "description": "ContractInteractionError"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "wallet_address"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "type": "string",
+                    "description": "The wallet address of the member to be locked"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/MemberCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/member/unlock": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "unLock a member",
+        "description": "Admin can unlock a member by their wallet address. This involves a smart contract call and a database update. Requires admin authentication.",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "202": {
+            "description": "Transaction success but DB Update Failed"
+          },
+          "400": {
+            "description": "ContractInteractionError"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "wallet_address"
+                ],
+                "properties": {
+                  "wallet_address": {
+                    "type": "string",
+                    "description": "The wallet address of the member to be unlocked"
+                  }
+                }
+              },
+              "examples": {
+                "Member": {
+                  "$ref": "#/components/examples/MemberCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quests/add": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answers": {
+                    "example": "any"
+                  },
+                  "quest_title": {
+                    "example": "any"
+                  },
+                  "quest_description": {
+                    "example": "any"
+                  },
+                  "quest_end_date": {
+                    "example": "any"
+                  },
+                  "quest_end_date_utc": {
+                    "example": "any"
+                  },
+                  "quest_creator": {
+                    "example": "any"
+                  },
+                  "quest_image_link": {
+                    "example": "any"
+                  },
+                  "quest_category_id": {
+                    "example": "any"
+                  },
+                  "season_id": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quests/all": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "example": "any"
+                  },
+                  "tx": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quest-dao/{quest_key}/draft/set": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Set the Draft result for a quest",
+        "description": "Sets the draft result for a specified quest and updates its status",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to set the draft result for",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "approve Or reject",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Smart Contract Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/draft/make": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Make the Draft result for a quest",
+        "description": "Creates the draft result for a specified quest, updates its status, and interacts with the smart contract",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to make the draft result for",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "approve",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Smart Contract Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/cancel": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Cancel a quest",
+        "description": "Only use this api when quest is not satisfy first step in dao process",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to finish",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "adjourn",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/publish": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Publish a quest",
+        "description": "Publishes an approved quest to the blockchain and updates its status",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to publish",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Publish",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Smart Contract Bad Request"
+          },
+          "401": {
+            "description": "InvalidQuestStatus"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/finish": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Finish a quest",
+        "description": "Finishes a quest by calling the smart contract and updates its status in the database",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to finish",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Finish",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Smart Contract Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/dao-success": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Start DAO success decision process for a quest",
+        "description": "Initiates the DAO success decision process for a quest by calling the smart contract and updates the quest status in the database",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to start DAO success decision for",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Start Decision",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Smart Contract Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/dao-success/set": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Set DAO success decision for a quest",
+        "description": "Sets the DAO success decision for a quest by calling the smart contract and updates the quest status in the database",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to set DAO success decision for",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "success",
+                      "error": null
+                    }
+                  },
+                  "Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "fail",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/dao-success/make": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Make DAO success decision for a quest",
+        "description": "Initiates the process to make a DAO success decision for a quest",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to make DAO success decision for",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "DAO success decision made",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/adjourn": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Adjourn a quest",
+        "description": "Adjourns a quest, potentially pausing or delaying its current state",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to adjourn",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "adjourn",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/answer": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Set DAO answer for a quest",
+        "description": "Sets the DAO answer for a specified quest",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to set DAO answer for",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "DAO answer set successfully",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/success": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Mark a quest as successful",
+        "description": "Updates the status of a quest to mark it as successful",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to mark as successful",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": 1,
+                  "data": "",
+                  "message": {
+                    "type": "string"
+                  },
+                  "error": null
+                },
+                "examples": {
+                  "Success": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Quest marked as successful",
+                      "error": null
+                    }
+                  },
+                  "Success with DB Update Failure": {
+                    "value": {
+                      "success": 1,
+                      "data": "",
+                      "message": "Transaction success but DB Update Failed",
+                      "error": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/draft-end": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Set Draft End time in force (ONLY TEST)",
+        "description": "This api is only for the test",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to mark as successful",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/dao-success-end": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Set Success End time in force (ONLY TEST)",
+        "description": "This api is only for the test",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to mark as successful",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-dao/{quest_key}/answer-end": {
+      "patch": {
+        "tags": [
+          "Quest-dao"
+        ],
+        "summary": "Set Answer End time in force (ONLY TEST)",
+        "description": "This api is only for the test",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to mark as successful",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/betting/add": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quest_key": {
+                    "example": "any"
+                  },
+                  "answer_key": {
+                    "example": "any"
+                  },
+                  "betting_amount": {
+                    "example": "any"
+                  },
+                  "betting_address": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/betting/{betting_key}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "betting_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/betting/confirm/{betting_key}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "betting_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "betting_tx",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/": {
+      "post": {
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Create a new vote for a quest",
+        "description": "Creates a new vote for a specific quest",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to vote on",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "voter",
+                  "power",
+                  "option",
+                  "tx"
+                ],
+                "properties": {
+                  "voter": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_voter"
+                  },
+                  "power": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_power"
+                  },
+                  "option": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_draft_option"
+                  },
+                  "tx": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_draft_tx"
+                  }
+                }
+              },
+              "examples": {
+                "Vote": {
+                  "$ref": "#/components/examples/VoteCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/{voter}/success": {
+      "patch": {
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Update vote success data",
+        "description": "After smart contract call update success option & tx",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to vote on",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "voter",
+            "in": "path",
+            "description": "The address of the voter",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "option",
+                  "tx"
+                ],
+                "properties": {
+                  "option": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_success_option"
+                  },
+                  "tx": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_success_tx"
+                  }
+                }
+              },
+              "examples": {
+                "Vote": {
+                  "$ref": "#/components/examples/VoteUpdateSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/{voter}/answer": {
+      "patch": {
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Update vote answer data",
+        "description": "After smart contract call update answer option & tx",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to vote on",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "voter",
+            "in": "path",
+            "description": "The address of the voter",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "answer_key",
+                  "tx"
+                ],
+                "properties": {
+                  "answer_key": {
+                    "$ref": "#/components/schemas/Vote/properties/quest_answer_key"
+                  },
+                  "tx": {
+                    "$ref": "#/components/schemas/Vote/properties/vote_answer_tx"
+                  }
+                }
+              },
+              "examples": {
+                "Vote": {
+                  "$ref": "#/components/examples/VoteUpdateAnswer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/{voter}/reward": {
+      "patch": {
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Update vote reward status",
+        "description": "After smart contract call update reward status as true. it means the voter got reward",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to vote on",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "voter",
+            "in": "path",
+            "description": "The address of the voter",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward status Updated as true"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/{voter}/archive": {
+      "patch": {
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Archive the vote",
+        "description": "When member want to get rid of the vote from the list, archive it",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to vote on",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "voter",
+            "in": "path",
+            "description": "The address of the voter",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Archived"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/{voter}/unarchive": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "voter",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "voter": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quests/{quest_key}/vote/{voter}": {
+      "get": {
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Get vote Data",
+        "description": "Get vote data from voter & quest_key",
+        "parameters": [
+          {
+            "name": "quest_key",
+            "in": "path",
+            "description": "The key of the quest to vote on",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "voter",
+            "in": "path",
+            "description": "The address of the voter",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {},
+                      "default": {
+                        "$ref": "#/components/examples/Vote/value"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": ""
+                    },
+                    "error": {
+                      "type": "null",
+                      "default": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        }
+      }
+    },
+    "/season/": {
+      "post": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Create a new season for a quest",
+        "description": "Creates a new season for the project",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "title",
+                  "description",
+                  "start_date",
+                  "end_date",
+                  "min_pay",
+                  "max_pay",
+                  "service_fee",
+                  "charity_fee",
+                  "creator_fee"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the season"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the season"
+                  },
+                  "start_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Start date of the season"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "End date of the season"
+                  },
+                  "min_pay": {
+                    "type": "number",
+                    "description": "Minimum payment for the season"
+                  },
+                  "max_pay": {
+                    "type": "number",
+                    "description": "Maximum payment for the season"
+                  },
+                  "service_fee": {
+                    "type": "number",
+                    "description": "Service fee for the season"
+                  },
+                  "charity_fee": {
+                    "type": "number",
+                    "description": "Charity fee for the season"
+                  },
+                  "creator_fee": {
+                    "type": "number",
+                    "description": "Creator fee for the season"
+                  }
+                }
+              },
+              "examples": {
+                "Season": {
+                  "$ref": "#/components/examples/SeasonCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/season/active": {
+      "get": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Get details of the active season",
+        "description": "Retrieves the details of the currently active season",
+        "responses": {
+          "200": {
+            "description": "Successful operation - Active season found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "season": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "123e4567-e89b-12d3-a456-426614174000"
+                            },
+                            "title": {
+                              "type": "string",
+                              "example": "Summer 2023"
+                            },
+                            "description": {
+                              "type": "string",
+                              "example": "Exciting quests for summer 2023"
+                            },
+                            "startDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2023-06-01T00:00:00Z"
+                            },
+                            "endDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2023-08-31T23:59:59Z"
+                            },
+                            "minPay": {
+                              "type": "number",
+                              "example": 100
+                            },
+                            "maxPay": {
+                              "type": "number",
+                              "example": 1000
+                            },
+                            "serviceFee": {
+                              "type": "number",
+                              "example": 5
+                            },
+                            "charityFee": {
+                              "type": "number",
+                              "example": 2
+                            },
+                            "creatorFee": {
+                              "type": "number",
+                              "example": 1
+                            },
+                            "active": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successful operation - Multiple active seasons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Active season is multiple"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/season/{season_id}": {
+      "get": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Get details of a specific season",
+        "description": "Retrieves the details of a specific season by its ID",
+        "parameters": [
+          {
+            "name": "season_id",
+            "in": "path",
+            "description": "ID of the season to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "Summer 2023"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Exciting quests for summer 2023"
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2023-06-01T00:00:00Z"
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2023-08-31T23:59:59Z"
+                    },
+                    "minPay": {
+                      "type": "number",
+                      "example": 100
+                    },
+                    "maxPay": {
+                      "type": "number",
+                      "example": 1000
+                    },
+                    "serviceFee": {
+                      "type": "number",
+                      "example": 5
+                    },
+                    "charityFee": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "creatorFee": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Update an existing season",
+        "description": "Updates an existing season with the provided data. All fields are optional.",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "season_id",
+            "in": "path",
+            "description": "ID of the season to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Season updated successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Updated title of the season"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Updated description of the season"
+                  },
+                  "start_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Updated start date of the season"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Updated end date of the season"
+                  },
+                  "min_pay": {
+                    "type": "number",
+                    "description": "Updated minimum payment for the season"
+                  },
+                  "max_pay": {
+                    "type": "number",
+                    "description": "Updated maximum payment for the season"
+                  },
+                  "service_fee": {
+                    "type": "number",
+                    "description": "Updated service fee for the season"
+                  },
+                  "charity_fee": {
+                    "type": "number",
+                    "description": "Updated charity fee for the season"
+                  },
+                  "creator_fee": {
+                    "type": "number",
+                    "description": "Updated creator fee for the season"
+                  }
+                }
+              },
+              "examples": {
+                "Season": {
+                  "$ref": "#/components/examples/SeasonCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/season/{season_id}/active": {
+      "patch": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Toggle active status of a season",
+        "description": "Toggles the active status of a specific season. If it was active, it becomes inactive and vice versa.",
+        "parameters": [
+          {
+            "name": "season_id",
+            "in": "path",
+            "description": "ID of the season to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/season/{season_id}/archive": {
+      "patch": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Archive the season",
+        "description": "If admin want to hide season from public",
+        "parameters": [
+          {
+            "name": "season_id",
+            "in": "path",
+            "description": "ID of the season to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/season/{season_id}/unarchive": {
+      "patch": {
+        "tags": [
+          "Season"
+        ],
+        "summary": "Unarachive the season",
+        "description": "If admin want to show the hide season in public",
+        "parameters": [
+          {
+            "name": "season_id",
+            "in": "path",
+            "description": "ID of the season to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-category/": {
+      "post": {
+        "tags": [
+          "Quest-category"
+        ],
+        "summary": "Create a new category for quests",
+        "description": "Creates a new category for quests in the project",
+        "parameters": [
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category created successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Validation Exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the category"
+                  },
+                  "order": {
+                    "type": "integer",
+                    "description": "Order of the category (optional)"
+                  }
+                }
+              },
+              "examples": {
+                "Category": {
+                  "$ref": "#/components/examples/QuestCategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Quest-category"
+        ],
+        "summary": "List all categories",
+        "description": "Retrieves a list of all quest categories",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique identifier for the category",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Title of the category",
+                            "example": "Adventure"
+                          },
+                          "order": {
+                            "type": "integer",
+                            "description": "Order of the category",
+                            "example": 1
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Creation date and time of the category",
+                            "example": "2023-06-01T00:00:00Z"
+                          },
+                          "archivedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Archival date and time of the category, if archived",
+                            "example": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quest-category/{quest_category_id}": {
+      "get": {
+        "tags": [
+          "Quest-category"
+        ],
+        "summary": "Get the category",
+        "description": "Retrieves a single category",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "deprecated": true
+      },
+      "patch": {
+        "tags": [
+          "Quest-category"
+        ],
+        "summary": "Update a specific category",
+        "description": "Updates the details of a specific quest category",
+        "parameters": [
+          {
+            "name": "quest_category_id",
+            "in": "path",
+            "description": "ID of the category to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "New title for the category"
+                  },
+                  "order": {
+                    "type": "integer",
+                    "description": "New order for the category"
+                  }
+                }
+              },
+              "examples": {
+                "Category": {
+                  "order": 2
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quest-category/{quest_category_id}/archive": {
+      "patch": {
+        "tags": [
+          "Quest-category"
+        ],
+        "summary": "Archive a specific category",
+        "description": "Archives a specific quest category. This operation marks the category as archived, typically hiding it from active use.",
+        "parameters": [
+          {
+            "name": "quest_category_id",
+            "in": "path",
+            "description": "ID of the category to archive",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/quest-category/{quest_category_id}/unarchive": {
+      "patch": {
+        "tags": [
+          "Quest-category"
+        ],
+        "summary": "unArchive a specific category",
+        "description": "unArchives a specific quest category.",
+        "parameters": [
+          {
+            "name": "quest_category_id",
+            "in": "path",
+            "description": "ID of the category to archive",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-message",
+            "in": "header",
+            "description": "Authentication message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-auth-signature",
+            "in": "header",
+            "description": "Authentication signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Member": {
+        "type": "object",
+        "properties": {
+          "member_id": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "integer"
+              },
+              "description": {
+                "type": "string",
+                "example": "Unique identifier for the member"
+              },
+              "readOnly": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "wallet_address": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 64
+              },
+              "description": {
+                "type": "string",
+                "example": "Ethereum wallet address of the member"
+              }
+            }
+          },
+          "member_role": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "enum": {
+                "type": "array",
+                "example": [
+                  "USER",
+                  "ADMIN"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "default": {
+                "type": "string",
+                "example": "USER"
+              },
+              "description": {
+                "type": "string",
+                "example": "Role of the member"
+              }
+            }
+          },
+          "member_email": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 255
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Email address of the member"
+              }
+            }
+          },
+          "member_name": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 20
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Name of the member"
+              }
+            }
+          },
+          "member_avatar": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 255
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "URL of the member's avatar image"
+              }
+            }
+          },
+          "member_email_verified": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 2
+              },
+              "enum": {
+                "type": "array",
+                "example": [
+                  "T",
+                  "F"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "default": {
+                "type": "string",
+                "example": "F"
+              },
+              "description": {
+                "type": "string",
+                "example": "Email verification status"
+              }
+            }
+          },
+          "member_locked_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Timestamp when the member was locked"
+              }
+            }
+          },
+          "member_locked_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of the locking transaction"
+              }
+            }
+          },
+          "member_delegated_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of the delegation transaction"
+              }
+            }
+          },
+          "member_created_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "description": {
+                "type": "string",
+                "example": "Timestamp when the member was created"
+              },
+              "readOnly": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "member_updated_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "description": {
+                "type": "string",
+                "example": "Timestamp when the member was last updated"
+              },
+              "readOnly": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "member_archived_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Timestamp when the member was archived"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Member"
+        }
+      },
+      "Vote": {
+        "type": "object",
+        "properties": {
+          "vote_id": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "uuid"
+              },
+              "description": {
+                "type": "string",
+                "example": "Unique identifier for the vote"
+              }
+            }
+          },
+          "quest_key": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "integer"
+              },
+              "format": {
+                "type": "string",
+                "example": "int64"
+              },
+              "description": {
+                "type": "string",
+                "example": "The key of the associated quest"
+              }
+            }
+          },
+          "vote_voter": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 64
+              },
+              "description": {
+                "type": "string",
+                "example": "The address of the voter"
+              }
+            }
+          },
+          "vote_power": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "integer"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The voting power of the voter"
+              }
+            }
+          },
+          "vote_draft_option": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "enum": {
+                "type": "array",
+                "example": [
+                  "APPROVE",
+                  "REJECT"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The option chosen in the draft vote"
+              }
+            }
+          },
+          "vote_draft_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The transaction hash of the draft vote"
+              }
+            }
+          },
+          "vote_success_option": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "enum": {
+                "type": "array",
+                "example": [
+                  "SUCCESS",
+                  "ADJOURN"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The option chosen in the success vote"
+              }
+            }
+          },
+          "vote_success_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The transaction hash of the success vote"
+              }
+            }
+          },
+          "quest_answer_key": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "integer"
+              },
+              "format": {
+                "type": "string",
+                "example": "int64"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The key of the associated quest answer"
+              }
+            }
+          },
+          "vote_answer_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The transaction hash of the answer vote"
+              }
+            }
+          },
+          "vote_reward_status": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "boolean"
+              },
+              "description": {
+                "type": "string",
+                "example": "The reward status of the vote"
+              }
+            }
+          },
+          "vote_archived_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the vote was archived"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Vote"
+        }
+      },
+      "Quest": {
+        "type": "object",
+        "properties": {
+          "quest_key": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "integer"
+              },
+              "format": {
+                "type": "string",
+                "example": "int64"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": false
+              },
+              "description": {
+                "type": "string",
+                "example": "Key of the associated quest"
+              }
+            }
+          },
+          "quest_title": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 1000
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": false
+              },
+              "description": {
+                "type": "string",
+                "example": "Title of the quest"
+              }
+            }
+          },
+          "quest_description": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 2000
+              },
+              "description": {
+                "type": "string",
+                "example": "Description of the quest"
+              }
+            }
+          },
+          "season_id": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "uuid"
+              },
+              "description": {
+                "type": "string",
+                "example": "Unique identifier of the season to which this quest is related to"
+              }
+            }
+          },
+          "quest_category_id": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "uuid"
+              },
+              "description": {
+                "type": "string",
+                "example": "Unique identifier of the category to which this quest is related to"
+              }
+            }
+          },
+          "quest_creator": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "description": {
+                "type": "string",
+                "example": "The creator of the quest (address)"
+              }
+            }
+          },
+          "quest_image_url": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 255
+              },
+              "description": {
+                "type": "string",
+                "example": "The image url of the quest"
+              }
+            }
+          },
+          "quest_image_link": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 255
+              },
+              "description": {
+                "type": "string",
+                "example": "External link of the quest"
+              }
+            }
+          },
+          "quest_end_date": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "description": {
+                "type": "string",
+                "example": "The end date of the quest"
+              }
+            }
+          },
+          "quest_end_date_utc": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "description": {
+                "type": "string",
+                "example": "The end date of the quest in utc"
+              }
+            }
+          },
+          "quest_hot": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "bool"
+              },
+              "default": {
+                "type": "boolean",
+                "example": false
+              },
+              "description": {
+                "type": "string",
+                "example": "True if associated quest is hot, false otherwise"
+              }
+            }
+          },
+          "quest_status": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "enum": {
+                "type": "array",
+                "example": [
+                  "DRAFT",
+                  "APPROVE",
+                  "REJECT",
+                  "PUBLISH",
+                  "FINISH",
+                  "DAO_SUCCESS",
+                  "MARKET_SUCCESS",
+                  "ADJOURN"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string",
+                "example": "The status of the quest"
+              }
+            }
+          },
+          "quest_publish_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of publish tx"
+              }
+            }
+          },
+          "quest_publish_datetime": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is published"
+              }
+            }
+          },
+          "quest_finish_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The transaction hash of the finish tx"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              }
+            }
+          },
+          "quest_finish_datetime": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is finished"
+              }
+            }
+          },
+          "quest_adjourn_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "description": {
+                "type": "string",
+                "example": "The transaction hash of the adjourn tx"
+              }
+            }
+          },
+          "quest_adjourn_datetime": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is adjourned"
+              }
+            }
+          },
+          "quest_success_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of the adjourn tx"
+              }
+            }
+          },
+          "quest_success_datetime": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is set to success"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "quest_created_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is created"
+              },
+              "readOnly": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "quest_updated_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is updated"
+              }
+            }
+          },
+          "quest_archived_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The date and time when the quest is archived"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              }
+            }
+          },
+          "dao_created_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of the dao created tx"
+              }
+            }
+          },
+          "dao_draft_start_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The start date of the dao draft vote"
+              }
+            }
+          },
+          "dao_draft_end_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The end date of the dao draft vote"
+              }
+            }
+          },
+          "dao_draft_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of quest draft tx"
+              }
+            }
+          },
+          "dao_success_start_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The start date of dao success votes"
+              }
+            }
+          },
+          "dao_success_end_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The end date of dao success votes"
+              }
+            }
+          },
+          "dao_success_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of dao success tx"
+              }
+            }
+          },
+          "dao_answer_start_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "format": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The start date of dao answer votes"
+              }
+            }
+          },
+          "dao_answer_end_at": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "description": {
+                "type": "string",
+                "example": "The end date of dao answer votes"
+              }
+            }
+          },
+          "dao_answer_tx": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              },
+              "nullable": {
+                "type": "boolean",
+                "example": true
+              },
+              "default": {},
+              "maxLength": {
+                "type": "number",
+                "example": 66
+              },
+              "description": {
+                "type": "string",
+                "example": "Transaction hash of dao answer tx"
+              }
+            }
+          },
+          "quest_pending": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "bool"
+              },
+              "default": {
+                "type": "boolean",
+                "example": false
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Quest"
+        }
+      }
+    },
+    "examples": {
+      "MemberCreate": {
+        "value": {
+          "wallet_address": "0x1234567890123456789012345678901234567890"
+        }
+      },
+      "Member": {
+        "value": {
+          "id": 1,
+          "walletAddress": "0x1234567890123456789012345678901234567890",
+          "role": "USER",
+          "email": "user@example.com",
+          "name": "John Doe",
+          "avatar": "https://example.com/avatars/johndoe.jpg",
+          "emailVerified": "F",
+          "lockedAt": null,
+          "lockedTx": null,
+          "delegatedTx": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+          "createdAt": "2024-09-05T06:16:35.000Z",
+          "updatedAt": "2024-09-05T06:16:35.000Z",
+          "archivedAt": null
+        }
+      },
+      "MemberUpdateDelegate": {
+        "value": {
+          "delegated_tx": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+        }
+      },
+      "UpdateMemberRole": {
+        "value": {
+          "wallet_address": "0x1234567890123456789012345678901234567890",
+          "role": "ADMIN"
+        }
+      },
+      "Vote": {
+        "value": {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "questKey": 1234,
+          "voter": "0x1234567890123456789012345678901234567890",
+          "power": 100,
+          "draftOption": "APPROVE",
+          "draftTx": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+          "successOption": null,
+          "successTx": null,
+          "questAnswerKey": null,
+          "answerTx": null,
+          "rewardStatus": false,
+          "archivedAt": "2024-09-05T12:00:00Z"
+        }
+      },
+      "VoteCreate": {
+        "value": {
+          "voter": "0x1234567890123456789012345678901234567890",
+          "tx": "0x1234567890123456789012345678901234567890123456789012345678901234",
+          "power": 5,
+          "option": "approve"
+        }
+      },
+      "VoteUpdateSuccess": {
+        "value": {
+          "option": "success",
+          "tx": "0x1234567890123456789012345678901234567890123456789012345678901234"
+        }
+      },
+      "VoteUpdateAnswer": {
+        "value": {
+          "answer_key": "123",
+          "tx": "0x1234567890123456789012345678901234567890123456789012345678901234"
+        }
+      },
+      "SeasonCreate": {
+        "value": {
+          "title": "Summer 2023",
+          "description": "Exciting quests for summer 2023",
+          "start_date": "2023-06-01T00:00:00Z",
+          "end_date": "2023-08-31T23:59:59Z",
+          "min_pay": 100,
+          "max_pay": 1000,
+          "service_fee": 5,
+          "charity_fee": 2,
+          "creator_fee": 1
+        }
+      },
+      "QuestCategory": {
+        "value": {
+          "title": "Adventure",
+          "order": 1
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

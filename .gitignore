@@ -1,0 +1,52 @@
+# OS X
+.DS_Store*
+Icon?
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+*~
+
+# yarn
+yarn.lock
+
+# npm
+node_modules
+*.log
+*.gz
+
+
+# Coveralls
+coverage
+
+# Benchmarking
+benchmarks/graphs
+
+deployedABI
+deployedAddress
+.env
+.env.production
+.env.dev
+.env.prod
+.prettierignore
+
+.idea/*
+package-lock.json
+TASK_DIVISION.md
+
+src/solana-sdk/dist/
+src/solana-sdk/*.js
+src/solana-sdk/*.js.map
+src/solana-sdk/*.d.ts
+src/solana-sdk/*.d.ts.map
+src/backup/
+
+# Backup files
+*.backup
+**/*.backup
+src/controllers/questDaoController.js.backup
