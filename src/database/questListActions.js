@@ -117,6 +117,24 @@ const questListActions = {
           'dao_success_start_at',
           'dao_success_end_at',
           [
+            models.sequelize.literal(`(
+              SELECT COALESCE(SUM(vote_power), 0)
+              FROM votes
+              WHERE votes.quest_key = quests.quest_key
+              AND votes.vote_draft_option = 'APPROVE'
+            )`),
+            'total_approve_power',
+          ],
+          [
+            models.sequelize.literal(`(
+              SELECT COALESCE(SUM(vote_power), 0)
+              FROM votes
+              WHERE votes.quest_key = quests.quest_key
+              AND votes.vote_draft_option = 'REJECT'
+            )`),
+            'total_reject_power',
+          ],
+          [
             models.sequelize.fn(
               'SUM',
               models.sequelize.literal(
@@ -169,7 +187,7 @@ const questListActions = {
             [Op.ne]: null,
           },
         },
-        group: ['quests.quest_key', 'answers.answer_key'],
+        group: ['quests.quest_key'],
         limit,
         offset: (offset - 1) * limit,
         order: [['quest_created_at', 'DESC']],
@@ -179,6 +197,8 @@ const questListActions = {
       const formattedQuests = rows.map((quest) => {
         const total_success_power = parseInt(quest.get('total_success_power')) || 0;
         const total_adjourn_power = parseInt(quest.get('total_adjourn_power')) || 0;
+        const total_approve_power = parseInt(quest.get('total_approve_power')) || 0;
+        const total_reject_power = parseInt(quest.get('total_reject_power')) || 0;
 
         return {
           quest_key: quest.quest_key,
@@ -192,7 +212,10 @@ const questListActions = {
           dao_success_end_at: quest.dao_success_end_at,
           total_success_power,
           total_adjourn_power,
+          total_approve_power,
+          total_reject_power,
           total_vote: total_success_power + total_adjourn_power,
+          total_draft_vote: total_approve_power + total_reject_power,
           answers: quest.answers.map((answer) => ({
             answer_key: answer.answer_key,
             answer_title: answer.answer_title,
@@ -560,15 +583,14 @@ const questListActions = {
             'answer_key',
             'answer_title',
             'answer_selected',
-            [models.sequelize.fn('SUM', models.sequelize.col('answers.votes.vote_power')), 'vote_power'],
-          ],
-          include: [
-            {
-              model: models.votes,
-              as: 'votes',
-              attributes: [],
-              required: false,
-            },
+            [
+              models.sequelize.literal(`(
+                SELECT COALESCE(SUM(v.vote_power), 0)
+                FROM votes AS v
+                WHERE v.quest_answer_key = answers.answer_key
+              )`),
+              'vote_power'
+            ],
           ],
           required: false,
           separate: true,
@@ -578,7 +600,7 @@ const questListActions = {
       where: {
         quest_status: 'DAO_SUCCESS',
       },
-      group: ['quests.quest_key', 'answers.answer_key'],
+      group: ['quests.quest_key'],
       limit,
       offset: (offset - 1) * limit,
       order: [['quest_created_at', 'DESC']],

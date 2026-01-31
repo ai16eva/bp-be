@@ -28,7 +28,7 @@ const sequelize = new Sequelize({
   logging: false
 });
 
-sequelize.sync({ alter: true });
+// sequelize.sync({ alter: true });
 
 var db = {};
 
