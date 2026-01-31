@@ -259,6 +259,7 @@ const questListActions = {
           attributes: [
             'answer_key',
             'answer_title',
+            'answer_selected',
             [
               models.sequelize.literal(`(
                 SELECT COALESCE(SUM(betting_amount), 0)
@@ -289,13 +290,19 @@ const questListActions = {
       },
       limit,
       offset: (offset - 1) * limit,
-      group: ['quests.quest_key', 'answers.answer_key'],
+      group: ['quests.quest_key'],
       order: [['quest_created_at', 'DESC']],
       subQuery: false,
     });
 
     const formattedQuests = rows.map((quest) => {
       const plainQuest = quest.get({ plain: true });
+      const total_vote = plainQuest.answers.reduce(
+        (sum, answer) => sum + (parseInt(answer.total_answer_vote_power) || 0),
+        0
+      );
+      const selectedAnswer = plainQuest.answers.find((answer) => answer.answer_selected);
+
       return {
         quest_key: plainQuest.quest_key,
         quest_title: plainQuest.quest_title,
@@ -306,9 +313,12 @@ const questListActions = {
         quest_end_date: plainQuest.quest_end_date,
         dao_answer_start_at: plainQuest.dao_answer_start_at,
         dao_answer_end_at: plainQuest.dao_answer_end_at,
+        total_vote,
+        answer_selected: selectedAnswer ? selectedAnswer.answer_title : null,
         answers: plainQuest.answers.map((answer) => ({
           answer_key: answer.answer_key,
           answer_title: answer.answer_title,
+          answer_selected: answer.answer_selected,
           total_betting_amount: parseFloat(answer.total_betting_amount) || 0,
           total_answer_vote_power: parseInt(answer.total_answer_vote_power) || 0,
         })),

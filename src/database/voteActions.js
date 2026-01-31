@@ -10,7 +10,7 @@ const voteActions = {
   Create: async (quest_key, data) => {
     const vote = await Vote.findOne({ where: { quest_key, vote_voter: data.voter } });
     if (vote) return;
-    
+
     const createDTO = {
       quest_key,
       vote_voter: data.voter,
@@ -63,7 +63,7 @@ const voteActions = {
   UpdateSuccess: async (quest_key, voter, data) => {
     const vote = await Vote.findOne({ where: { quest_key, vote_voter: voter } });
     if (!vote) throw new VoteNotFound();
-    if (vote.vote_success_tx) return;
+    if (vote.vote_success_tx && vote.vote_success_tx !== 'pending') return;
 
     const updateDTO = {
       vote_success_tx: data.tx,
@@ -76,7 +76,7 @@ const voteActions = {
   UpdateAnswer: async (quest_key, voter, data) => {
     const vote = await Vote.findOne({ where: { quest_key, vote_voter: voter } });
     if (!vote) throw new VoteNotFound();
-    if (vote.vote_answer_tx) return;
+    if (vote.vote_answer_tx && vote.vote_answer_tx !== 'pending') return;
     const updateDTO = {
       vote_answer_tx: data.tx,
       quest_answer_key: data.answer_key,

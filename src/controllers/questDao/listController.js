@@ -13,7 +13,7 @@ const listController = {
 
       switch (status) {
         case 'draft':
-          result = await client.QuestList.draftList(pageSize, page);
+          result = await client.QuestList.draftListAtDaoPage(pageSize, page);
           break;
         case 'publish':
           result = await client.QuestList.publishList(pageSize, page);
@@ -22,7 +22,7 @@ const listController = {
           result = await client.QuestList.deicisionList(pageSize, page);
           break;
         case 'answer':
-          result = await client.QuestList.answerList(pageSize, page);
+          result = await client.QuestList.answerListAtDaoPage(pageSize, page);
           break;
         case 'success':
           result = await client.QuestList.successList(pageSize, page);

@@ -318,7 +318,7 @@ module.exports = {
       if (!existingVote || !existingVote.vote_draft_option) {
         throw new Error(' must vote draft before');
       }
-      if (existingVote.vote_success_option) {
+      if (existingVote.vote_success_option && existingVote.vote_success_tx !== 'pending') {
         throw new Error('Already voted on decision');
       }
 
@@ -376,7 +376,7 @@ module.exports = {
       if (!existingVote || !existingVote.vote_success_option) {
         throw new Error('Phải vote vòng decision trước');
       }
-      if (existingVote.quest_answer_key) {
+      if (existingVote.quest_answer_key && existingVote.vote_answer_tx !== 'pending') {
         throw new Error('Đã vote vòng answer');
       }
 
