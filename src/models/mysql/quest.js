@@ -92,7 +92,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: null,
       },
       quest_finish_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -102,7 +102,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: null,
       },
       quest_adjourn_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -112,7 +112,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: null,
       },
       quest_success_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -137,7 +137,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: Sequelize.fn('NOW'),
       },
       dao_created_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -150,7 +150,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: null,
       },
       dao_draft_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -163,7 +163,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: null,
       },
       dao_success_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -189,7 +189,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: false,
       },
       quest_retrieve_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
