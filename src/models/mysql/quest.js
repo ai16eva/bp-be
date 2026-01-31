@@ -134,7 +134,7 @@ module.exports = (Sequelize, DataTypes) => {
       quest_archived_at: {
         type: DataTypes.DATE,
         allowNull: true,
-        defaultValue: Sequelize.fn('NOW'),
+        defaultValue: null,
       },
       dao_created_tx: {
         type: DataTypes.STRING(128),

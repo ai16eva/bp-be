@@ -595,11 +595,20 @@ const questListActions = {
             'answer_selected',
             [
               models.sequelize.literal(`(
+                SELECT COALESCE(SUM(betting_amount), 0)
+                FROM bettings
+                WHERE bettings.answer_key = answers.answer_key
+                AND bettings.betting_status = 1
+              )`),
+              'total_betting_amount',
+            ],
+            [
+              models.sequelize.literal(`(
                 SELECT COALESCE(SUM(v.vote_power), 0)
                 FROM votes AS v
                 WHERE v.quest_answer_key = answers.answer_key
               )`),
-              'vote_power'
+              'total_answer_vote_power',
             ],
           ],
           required: false,
@@ -622,11 +631,12 @@ const questListActions = {
       const selectedAnswer = quest.answers.find((answer) => answer.answer_selected);
       const answers = quest.answers.map((answer) => ({
         answer_title: answer.answer_title,
-        vote_power: parseInt(answer.get('vote_power')) || 0,
+        total_answer_vote_power: parseInt(answer.get('total_answer_vote_power')) || 0,
+        total_betting_amount: parseFloat(answer.get('total_betting_amount')) || 0,
         answer_key: answer.answer_key,
       }));
 
-      const total_vote = answers.reduce((sum, answer) => sum + answer.vote_power, 0);
+      const total_vote = answers.reduce((sum, answer) => sum + answer.total_answer_vote_power, 0);
 
       return {
         quest_key: quest.quest_key,
