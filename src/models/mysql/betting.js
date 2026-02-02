@@ -16,7 +16,7 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: false,
       },
       betting_tx: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },
@@ -53,7 +53,7 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: Sequelize.fn('NOW'),
       },
       reward_tx: {
-        type: DataTypes.STRING(66),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
       },

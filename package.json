@@ -6,7 +6,6 @@
     "start": "NODE_ENV=prod nodemon server.js",
     "start:dev": "NODE_ENV=dev nodemon server.js",
     "deploy": "NODE_ENV=prod forever start server.js",
-    "db:clear": "mysql -h 127.0.0.1 -u root -p boomplay_db < scripts/helpers/clear_db_data.sql",
     "swagger-autogen": "node swagger/swagger.js",
     "test": "NODE_ENV=test jest --forceExit --detectOpenHandles",
     "test:watch": "NODE_ENV=test jest --watch",

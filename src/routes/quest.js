@@ -144,6 +144,11 @@ router.post(
   questCtrl.addQuest
 );
 
+router.get(
+  '/generate-id',
+  questCtrl.generateQuestKey
+);
+
 router.patch(
   /*
         #swagger.auto = false

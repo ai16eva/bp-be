@@ -47,6 +47,7 @@ module.exports = {
     try {
       let result = await models.sequelize.transaction(async (t) => {
         let {
+          quest_key,
           quest_title,
           quest_description,
           quest_end_date,
@@ -76,6 +77,11 @@ module.exports = {
           quest_category_id: quest_category_id,
           season_id: season_id,
         };
+
+        if (quest_key) {
+          newQuest.quest_key = quest_key;
+        }
+
         validateWalletAddress(quest_creator);
         if (!req.body.answers) throw new MissingRequiredParameter();
         if (req.file) {
@@ -101,8 +107,11 @@ module.exports = {
             if (!answer_title) {
               throw new MissingRequiredParameter('Answers are required');
             }
-            answer_title.answer_title = answer_title;
-            const ans = await CreateAnswer({ quest_key: quest.quest_key, answer_title: answer_title }, t);
+            const ansData = typeof answer_title === 'string'
+              ? { quest_key: quest.quest_key, answer_title: answer_title }
+              : { quest_key: quest.quest_key, answer_title: answer_title.answer_title || answer_title };
+
+            const ans = await CreateAnswer(ansData, t);
             questAnswers.push(ans);
           }
           quest['quest_answers'] = questAnswers;
@@ -116,6 +125,16 @@ module.exports = {
     } catch (e) {
       console.log(e)
       return res.status(400).json(err(e));
+    }
+  },
+
+  generateQuestKey: async (req, res) => {
+    try {
+      const generateUniqueKey = require('../utils/uniquekey_generate');
+      const key = generateUniqueKey();
+      res.status(200).json(success({ quest_key: key.toString() }));
+    } catch (e) {
+      res.status(400).json(err(e));
     }
   },
   getQuest: async (req, res) => {

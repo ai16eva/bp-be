@@ -57,7 +57,7 @@ module.exports = (Sequelize, DataTypes) => {
         comment: 'Whether the reward has been claimed',
       },
       reward_tx: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
         comment: 'Transaction hash when reward was distributed/claimed',
@@ -82,7 +82,7 @@ module.exports = (Sequelize, DataTypes) => {
         comment: 'Number of reward tokens on Solana',
       },
       solana_reward_tx: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(128),
         allowNull: true,
         defaultValue: null,
         comment: 'Solana transaction hash for reward distribution',

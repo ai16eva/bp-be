@@ -44,7 +44,9 @@ const questActions = {
       throw new MissingRequiredParameter();
     }
 
-    quest['quest_key'] = generateUniqueKey();
+    if (!quest.quest_key) {
+      quest['quest_key'] = generateUniqueKey();
+    }
     const newQuest = await Quest.create(quest, { transaction: transaction });
     return newQuest;
   },
