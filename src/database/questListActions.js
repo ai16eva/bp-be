@@ -7,6 +7,8 @@ const questListActions = {
       where: {
         quest_status: 'DRAFT',
         quest_archived_at: null,
+        dao_draft_start_at: { [Op.ne]: null },
+        dao_draft_end_at: { [Op.ne]: null },
       },
     });
     const rows = await Quest.findAll({
@@ -59,6 +61,8 @@ const questListActions = {
       where: {
         quest_status: 'DRAFT',
         quest_archived_at: null,
+        dao_draft_start_at: { [Op.ne]: null },
+        dao_draft_end_at: { [Op.ne]: null },
       },
       group: ['quests.quest_key'],
       limit: limit,
@@ -103,6 +107,8 @@ const questListActions = {
           dao_success_tx: {
             [Op.ne]: null,
           },
+          dao_success_start_at: { [Op.ne]: null },
+          dao_success_end_at: { [Op.ne]: null },
         },
       });
       const rows = await Quest.findAll({
@@ -186,6 +192,8 @@ const questListActions = {
           dao_success_tx: {
             [Op.ne]: null,
           },
+          dao_success_start_at: { [Op.ne]: null },
+          dao_success_end_at: { [Op.ne]: null },
         },
         group: ['quests.quest_key'],
         limit,
@@ -238,6 +246,8 @@ const questListActions = {
         dao_answer_tx: {
           [Op.ne]: null,
         },
+        dao_answer_start_at: { [Op.ne]: null },
+        dao_answer_end_at: { [Op.ne]: null },
       },
     });
     const rows = await Quest.findAll({
@@ -287,6 +297,8 @@ const questListActions = {
         dao_answer_tx: {
           [Op.ne]: null,
         },
+        dao_answer_start_at: { [Op.ne]: null },
+        dao_answer_end_at: { [Op.ne]: null },
       },
       limit,
       offset: (offset - 1) * limit,
