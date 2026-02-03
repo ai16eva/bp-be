@@ -16,13 +16,19 @@ const http = require('http');
 const { daoVotingResult } = require('./src/utils/jobs/daoVotting')
 const { setQuestFinish } = require('./src/utils/jobs/finishBetting')
 const { calculateRewards } = require('./src/utils/jobs/calculateRewards')
-const {rewardReferrals, runRewards} = require('./src/utils/jobs/referralReward')
-const {rewardCheckins} = require('./src/utils/jobs/checkinReward')
+const { rewardReferrals, runRewards } = require('./src/utils/jobs/referralReward')
+const { rewardCheckins } = require('./src/utils/jobs/checkinReward')
+const { runGovernanceIndexing } = require('./src/utils/jobs/governanceIndexing')
 
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 var server = http.createServer(app);
+
+// Every 30 minutes
+cron.schedule("*/30 * * * *", async () => {
+  await runGovernanceIndexing();
+})
 
 cron.schedule("*/5 * * * *", async () => { //set scheduler time
 

@@ -74,11 +74,23 @@ async function reindexCollection(inputCollectionAddress = null) {
       }
     }
 
-    if (items.length < limit) break;
-    page += 1;
   }
 
-  return { collectionAddress, total, pagesScanned: page - 1 };
+  // After indexing, sync Helius Webhook if configured
+  let webhookSynced = false;
+  const heliusService = require('./helius.service');
+  const heliusWebhookId = process.env.HELIUS_WEBHOOK_ID;
+
+  if (heliusWebhookId) {
+    try {
+      await heliusService.updateWebhook(heliusWebhookId);
+      webhookSynced = true;
+    } catch (e) {
+      console.warn('Failed to sync Helius webhook after indexing:', e.message);
+    }
+  }
+
+  return { collectionAddress, total, pagesScanned: page - 1, webhookSynced };
 }
 
 module.exports = {
