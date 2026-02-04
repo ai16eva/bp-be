@@ -141,5 +141,30 @@ router.post(
   nftCtrl.reindex
 );
 
+router.post(
+  '/admin/mint',
+  adminAuth,
+  /*
+    #swagger.auto = false
+    #swagger.tags = ['NFT']
+    #swagger.summary = 'Mint Governance NFT (Admin)'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          walletAddress: { type: 'string', example: '...' },
+          metadataUri: { type: 'string', example: 'ipfs://...' },
+          quantity: { type: 'integer', default: 5 },
+          name: { type: 'string', default: 'Governance NFT' },
+          symbol: { type: 'string', default: 'BGOV' }
+        }
+      }
+    }
+  */
+  nftCtrl.mintNft
+);
+
 module.exports = router;
 
