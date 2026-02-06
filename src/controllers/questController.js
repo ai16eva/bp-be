@@ -432,20 +432,24 @@ module.exports = {
           serviceFeePercentage: serviceFeePercentage || 0,
           charityFeePercentage: charityFeePercentage || 0,
           answerKeys: answerKeys || [0, 1],
-          bettingToken: quest.quest_betting_token_address, // Pass the betting token address
+          bettingToken: quest.quest_betting_token_address,
         });
 
-        await UpdateQuest(questKey, {
-          quest_status: 'PUBLISH',
-          quest_publish_datetime: Sequelize.fn('NOW'),
-          quest_publish_tx: receipt?.signature || 'unknown',
-        });
+        if (receipt && receipt.signature) {
+          await UpdateQuest(questKey, {
+            quest_status: 'PUBLISH',
+            quest_publish_datetime: Sequelize.fn('NOW'),
+            quest_publish_tx: receipt.signature,
+          });
 
-        return res.status(200).json(success({
-          signature: receipt?.signature || 'unknown',
-          questKey,
-          message: 'Market published'
-        }));
+          return res.status(200).json(success({
+            signature: receipt.signature,
+            questKey,
+            message: 'Market published and database updated'
+          }));
+        } else {
+          throw new Error('On-chain transaction failed or signature missing');
+        }
       }
 
       const transaction = await bpMarketSDK.publishMarket(marketData, ownerPK);
@@ -453,16 +457,10 @@ module.exports = {
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = ownerPK;
 
-      await UpdateQuest(questKey, {
-        quest_status: 'PUBLISH',
-        quest_publish_datetime: Sequelize.fn('NOW'),
-        quest_publish_tx: 'pending',
-      });
-
       return res.status(200).json(success({
         transaction: transaction.serialize({ requireAllSignatures: false }).toString('base64'),
         questKey,
-        message: 'Market publish transaction created'
+        message: 'Market publish transaction created. Please sign and submit from wallet.'
       }));
     } catch (error) {
       console.error('Publish market error:', error);
