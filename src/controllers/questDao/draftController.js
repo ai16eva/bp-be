@@ -31,14 +31,14 @@ const draftController = {
     const { quest_key } = req.params;
     try {
       const quest = await BaseQuestDaoController.getQuestWithValidation(quest_key);
-      
+
       let daoDraftTx = null;
 
       try {
         const governanceSDK = getGovernanceSDK();
         const questKeyBN = convertToBN(quest_key);
         const item = await governanceSDK.fetchGovernanceItem(questKeyBN);
-        
+
         if (item) {
           const result = item.questResult || item.quest_result;
           const questEndTime = item.questEndTime?.toNumber?.() || item.quest_end_time?.toNumber?.() || 0;
@@ -46,7 +46,7 @@ const draftController = {
 
           let approved = false;
           let resultStatus = 'unknown';
-          
+
           if (typeof result === 'number') {
             approved = result === 1;
             resultStatus = approved ? 'approved' : 'rejected';
@@ -62,7 +62,7 @@ const draftController = {
               resultStatus = 'rejected';
             }
           }
-          
+
           if (!approved) {
             if (resultStatus === 'pending') {
               try {
@@ -82,7 +82,7 @@ const draftController = {
 
                 try {
                   await client.QuestDao.OnPending(quest_key);
-                } catch (_) {}
+                } catch (_) { }
 
                 const questVotePDA = governanceSDK.getQuestVotePDA(questKeyBN)[0];
                 const qv = await governanceSDK.program.account.questVote.fetch(questVotePDA);
@@ -111,7 +111,7 @@ const draftController = {
                   } else {
                     try {
                       await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-                    } catch (_) {}
+                    } catch (_) { }
                     return res.status(400).json(err(new ContractInteractionError(
                       'Failed to approve quest result on-chain. Please try make draft result (PATCH /draft/make) first.'
                     )));
@@ -120,7 +120,7 @@ const draftController = {
               } catch (makeErr) {
                 try {
                   await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-                } catch (_) {}
+                } catch (_) { }
                 const errorInfo = handleSolanaError(makeErr);
                 return res.status(400).json(err(new ContractInteractionError(
                   `Failed to auto-approve quest result: ${errorInfo.message || makeErr.message}. Please try make draft result (PATCH /draft/make) first.`
@@ -132,7 +132,7 @@ const draftController = {
               )));
             }
           }
-          
+
           if (!approved) {
             return res.status(400).json(err(new ContractInteractionError(
               'Quest result is not approved on-chain. Please use make draft result (PATCH /draft/make) to approve on-chain first.'
@@ -142,7 +142,7 @@ const draftController = {
       } catch (onChainError) {
         console.error(`[setDraftResult] Could not verify on-chain status for quest ${quest_key}:`, onChainError.message);
       }
-      
+
       const updateData = {
         quest_status: 'APPROVE',
         quest_pending: false,
@@ -150,24 +150,24 @@ const draftController = {
       if (daoDraftTx) {
         updateData.dao_draft_tx = daoDraftTx;
       }
-      
+
       await client.QuestDao.UpdateStatus(quest_key, updateData);
-      
-      const updatedQuest = await models.quests.findOne({ 
+
+      const updatedQuest = await models.quests.findOne({
         where: { quest_key },
         attributes: ['quest_key', 'quest_status', 'quest_pending']
       });
-      
+
       if (!updatedQuest || updatedQuest.quest_status !== 'APPROVE') {
         throw new Error('Failed to update quest status to APPROVE');
       }
-      
+
       if (updatedQuest.quest_pending === true) {
         try {
           await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-        } catch (_) {}
+        } catch (_) { }
       }
-      
+
       return res.status(200).json(success('', 'APPROVE'));
     } catch (e) {
       const errorInfo = handleSolanaError(e);
@@ -180,7 +180,7 @@ const draftController = {
   makeDraftResult: async (req, res) => {
     const { quest_key } = req.params;
     let receipt;
-    
+
     try {
       await client.QuestDao.OnPending(quest_key);
     } catch (e) {
@@ -200,8 +200,8 @@ const draftController = {
           });
           return res.status(200).json(success('', 'APPROVE'));
         }
-      } catch (_) {}
-      
+      } catch (_) { }
+
       const questVotePDA = governanceSDK.getQuestVotePDA(questKeyBN)[0];
       const qv = await governanceSDK.program.account.questVote.fetch(questVotePDA);
       const approver = qv.countApprover?.toNumber?.() || qv.count_approver || 0;
@@ -220,7 +220,7 @@ const draftController = {
         message: errorInfo?.message || e?.message,
         logs: errorInfo?.logs,
       });
-      
+
       if (e.message === 'Transaction timeout' || errorInfo.name === 'BlockhashExpired') {
         try {
           await client.QuestDao.UpdateData(quest_key, { dao_draft_tx: e.transactionHash || errorInfo.originalError?.transactionHash });
@@ -229,9 +229,9 @@ const draftController = {
         }
         return res.status(202).json(success('', 'Pending'));
       }
-      
+
       await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-      
+
       const errorMessage = (process.env.NODE_ENV === 'dev' && errorInfo?.logs)
         ? `${errorInfo.message || e.message}\nLOGS:${JSON.stringify(errorInfo.logs, null, 2)}`
         : (errorInfo.message || errorInfo.originalError?.message || e.message || 'Unknown error');
@@ -244,18 +244,18 @@ const draftController = {
         quest_pending: false,
         dao_draft_tx: receipt.transactionHash,
       };
-      
+
       await client.QuestDao.UpdateStatus(quest_key, updateData);
-      
-      const updatedQuest = await models.quests.findOne({ 
+
+      const updatedQuest = await models.quests.findOne({
         where: { quest_key },
         attributes: ['quest_key', 'quest_status', 'dao_draft_tx']
       });
-      
+
       if (!updatedQuest || updatedQuest.quest_status !== 'APPROVE') {
         if (updatedQuest && updatedQuest.quest_status !== 'APPROVE') {
           await client.QuestDao.UpdateStatus(quest_key, updateData);
-          const retryQuest = await models.quests.findOne({ 
+          const retryQuest = await models.quests.findOne({
             where: { quest_key },
             attributes: ['quest_key', 'quest_status']
           });
@@ -266,12 +266,12 @@ const draftController = {
           throw new Error('Quest not found after update');
         }
       }
-      
+
       return res.status(200).json(success('', 'APPROVE'));
     } catch (e) {
       try {
         await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-      } catch (_) {}
+      } catch (_) { }
       return res.status(500).json(err('Transaction success but DB Update Failed'));
     }
   },
@@ -280,7 +280,7 @@ const draftController = {
     const { quest_key } = req.params;
 
     try {
-      const quest = await BaseQuestDaoController.getQuestWithValidation(quest_key);
+      const quest = await BaseQuestDaoController.getQuestWithValidation(quest_key, 'DRAFT');
 
       const governanceSDK = getGovernanceSDK();
       const questKeyBN = convertToBN(quest_key);
