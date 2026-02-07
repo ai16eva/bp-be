@@ -588,6 +588,9 @@ const questListActions = {
     const count = await Quest.count({
       where: {
         quest_status: 'DAO_SUCCESS',
+        dao_answer_tx: {
+          [Op.ne]: null,
+        },
       },
     });
     const rows = await Quest.findAll({

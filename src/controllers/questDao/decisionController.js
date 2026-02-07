@@ -285,6 +285,19 @@ const decisionController = {
         } catch (_) { }
       }
 
+      if (!endAt) {
+        try {
+          const governanceSDK = getGovernanceSDK();
+          const config = await governanceSDK.fetchConfig();
+          if (config && config.durationHours) {
+            const durationMs = config.durationHours.toNumber() * 3600000;
+            endAt = new Date(startAt.getTime() + durationMs);
+          }
+        } catch (configErr) {
+          console.warn('Failed to fetch config for fallback endAt:', configErr.message);
+        }
+      }
+
       updateInfo['dao_success_start_at'] = startAt;
       updateInfo['dao_success_end_at'] = endAt || startAt;
       updateInfo['dao_success_tx'] = receipt.transactionHash;
