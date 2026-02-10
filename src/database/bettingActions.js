@@ -72,7 +72,7 @@ const bettingActions = {
         )
     },
     MyBettings: async (wallet_address, page, size) => {
-        const bettings = await Bettings.findAll({
+        const { count, rows } = await Bettings.findAndCountAll({
             attributes: {
                 include: [
                     [
@@ -125,7 +125,7 @@ const bettingActions = {
             limit: size,
             offset: (page - 1) * size,
         });
-        return bettings;
+        return { total: count, bettings: rows };
     }
 }
 

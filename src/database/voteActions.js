@@ -141,6 +141,7 @@ const voteActions = {
           {
             model: models.quests,
             as: 'quest',
+            required: false,
             attributes: [
               'quest_key',
               'quest_title',
