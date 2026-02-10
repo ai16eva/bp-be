@@ -213,7 +213,7 @@ module.exports = {
       // Handle timeout/blockhash expiration similar to questDaoController
       const { handleSolanaError } = require('../utils/solanaErrorHandler');
       const errorInfo = handleSolanaError(e);
-      
+
       if (e.message === 'Transaction timeout' || errorInfo.name === 'BlockhashExpired') {
         try {
           const txHash = e.transactionHash || errorInfo.originalError?.transactionHash || receipt?.signature;
@@ -225,10 +225,10 @@ module.exports = {
         }
         return res.status(202).json(success('', 'Pending'));
       }
-      
+
       return res.status(400).json(err(new ContractInteractionError(e.message)));
     }
-    
+
     try {
       await client.Member.Lock(wallet_address);
       return res.status(200).json(success('', 'Locked!'));
@@ -265,7 +265,7 @@ module.exports = {
       // Handle timeout/blockhash expiration similar to questDaoController
       const { handleSolanaError } = require('../utils/solanaErrorHandler');
       const errorInfo = handleSolanaError(e);
-      
+
       if (e.message === 'Transaction timeout' || errorInfo.name === 'BlockhashExpired') {
         try {
           const txHash = e.transactionHash || errorInfo.originalError?.transactionHash || receipt?.signature;
@@ -277,10 +277,10 @@ module.exports = {
         }
         return res.status(202).json(success('', 'Pending'));
       }
-      
+
       return res.status(400).json(err(new ContractInteractionError(e.message)));
     }
-    
+
     try {
       await client.Member.Unlock(wallet_address);
       return res.status(200).json(success('', 'Unlocked!'));
