@@ -13,7 +13,6 @@ const { convertToBN, convertToPublicKey } = require('../utils/solanaHelpers');
 const transactionStatusService = require('../services/transactionStatusService');
 const solanaTxService = require('../services/solanaTxService');
 
-// Import improvements
 const { handleSolanaError } = require('../utils/solanaErrorHandler');
 const { checkAccountBalance } = require('../utils/solanaAccountHelpers');
 
@@ -28,7 +27,6 @@ module.exports = {
       validateVotingPower(power);
       option = validateDraftOp(option);
 
-      // Enforce on-chain maxVotableNft to avoid oversized power submissions
       const governanceSDK = getGovernanceSDK();
       const cfg = await governanceSDK.fetchConfig();
       const maxVotableNft = Number(cfg?.maxVotableNft ?? 0);
