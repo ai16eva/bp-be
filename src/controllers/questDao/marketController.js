@@ -18,9 +18,9 @@ const marketController = {
     const { quest_key } = req.params;
     let receipt;
     const updateInfo = {};
-    
+
     const quest = await BaseQuestDaoController.getQuestWithValidation(quest_key);
-    
+
     if (quest.quest_pending !== true) {
       try {
         await client.QuestDao.OnPending(quest_key);
@@ -30,12 +30,12 @@ const marketController = {
         }
       }
     }
-    
+
     try {
       receipt = await solanaTxService.finishMarket(quest_key);
     } catch (e) {
       const errorInfo = handleSolanaError(e);
-      
+
       if (e.message === 'Transaction timeout' || errorInfo.name === 'BlockhashExpired') {
         try {
           await client.QuestDao.UpdateData(quest_key, { quest_finish_tx: e.transactionHash || errorInfo.originalError?.transactionHash });
@@ -44,9 +44,9 @@ const marketController = {
         }
         return res.status(202).json(success('', 'Pending'));
       }
-      
+
       await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-      
+
       const errorMessage = errorInfo.message || errorInfo.originalError?.message || e.message;
       return res.status(400).json(err(new ContractInteractionError(errorMessage)));
     }
@@ -74,7 +74,7 @@ const marketController = {
       if (quest.quest_status !== 'APPROVE') {
         throw new InvalidQuestStatus('Quest must be in APPROVE status to publish market');
       }
-      
+
       if (quest.quest_pending === true) {
         try {
           await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
@@ -89,7 +89,7 @@ const marketController = {
           throw new QuestPending();
         }
       }
-      
+
       const answers = Array.isArray(quest.answers) ? quest.answers : [];
       if (answers.length === 0) {
         throw new ContractInteractionError('NoAnswersProvided');
@@ -110,7 +110,7 @@ const marketController = {
       }
     } catch (e) {
       await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-      
+
       const errorInfo = handleSolanaError(e);
       const errorMessage = errorInfo.message || e.message;
       if (errorMessage.includes('Account does not exist') || errorMessage.includes('not exist')) {
@@ -121,8 +121,8 @@ const marketController = {
 
     let answerKeys = Array.isArray(quest.answers)
       ? quest.answers
-          .map((a) => Number(a?.answer_key))
-          .filter((n) => Number.isFinite(n))
+        .map((a) => Number(a?.answer_key))
+        .filter((n) => Number.isFinite(n))
       : [];
     if (!answerKeys.length) {
       try {
@@ -130,10 +130,10 @@ const marketController = {
         answerKeys = rows
           .map((r) => Number(r.answer_key))
           .filter((n) => Number.isFinite(n));
-      } catch (_) {}
+      } catch (_) { }
     }
     if (!answerKeys.length) {
-      try { await client.QuestDao.UpdateData(quest_key, { quest_pending: false }); } catch (_) {}
+      try { await client.QuestDao.UpdateData(quest_key, { quest_pending: false }); } catch (_) { }
       return res.status(400).json(err(new ContractInteractionError('NoAnswersProvided')));
     }
 
@@ -162,11 +162,28 @@ const marketController = {
       receipt = await solanaTxService.publishMarket(quest_key, marketData);
     } catch (e) {
       await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-      
+
       const errorInfo = handleSolanaError(e);
+
+      if (e.message === 'Transaction timeout' || errorInfo.name === 'BlockhashExpired') {
+        const txHash = e.transactionHash || errorInfo.originalError?.transactionHash;
+        if (txHash) {
+          try {
+            await client.QuestDao.UpdateData(quest_key, { quest_publish_tx: txHash });
+          } catch (_) { }
+        }
+        return res.status(202).json(success('', 'Pending'));
+      }
+
       const msg = process.env.NODE_ENV === 'dev' && errorInfo.logs
         ? `${errorInfo.message}\nLOGS:${JSON.stringify(errorInfo.logs, null, 2)}`
         : errorInfo.message || e.message;
+      return res.status(400).json(err(new ContractInteractionError(msg)));
+    }
+
+    if (!receipt || !receipt.transactionHash) {
+      await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
+      const msg = receipt?.error || 'Publish market transaction failed without a valid signature';
       return res.status(400).json(err(new ContractInteractionError(msg)));
     }
 
@@ -178,18 +195,18 @@ const marketController = {
         quest_publish_datetime: new Date(),
         quest_pending: false,
       };
-      
+
       await client.QuestDao.UpdateStatus(quest_key, updateData);
-      
-      const updatedQuest = await models.quests.findOne({ 
+
+      const updatedQuest = await models.quests.findOne({
         where: { quest_key },
         attributes: ['quest_key', 'quest_status', 'quest_publish_tx', 'quest_pending']
       });
-      
+
       if (!updatedQuest) {
         throw new Error('Quest not found after update');
       }
-      
+
       if (updatedQuest.quest_status !== 'PUBLISH') {
         await client.QuestDao.UpdateStatus(quest_key, {
           quest_status: 'PUBLISH',
@@ -197,35 +214,37 @@ const marketController = {
           quest_publish_datetime: new Date(),
           quest_pending: false,
         });
-        
-        const retryQuest = await models.quests.findOne({ 
+
+        const retryQuest = await models.quests.findOne({
           where: { quest_key },
           attributes: ['quest_key', 'quest_status']
         });
-        
+
         if (retryQuest && retryQuest.quest_status !== 'PUBLISH') {
           throw new Error(`Failed to update quest status to PUBLISH. Current status: ${retryQuest.quest_status}`);
         }
       }
-      
+
       try {
         const bpMarketSDK = getBPMarketSDK();
         const marketKeyBN = convertToBN(quest_key);
-        
+
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
+
         let marketExists = false;
         for (let retry = 0; retry < 5; retry++) {
           try {
             const market = await bpMarketSDK.fetchMarket(marketKeyBN);
             if (market) {
               marketExists = true;
+              console.log(`[publishQuest] Market ${quest_key} verified on-chain (attempt ${retry + 1})`);
               break;
             }
           } catch (fetchError) {
             if (fetchError.message && (fetchError.message.includes('Account does not exist') || fetchError.message.includes('not found'))) {
               if (retry < 4) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                console.warn(`[publishQuest] Market ${quest_key} not found on-chain yet, retrying (${retry + 1}/5)...`);
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 continue;
               }
             } else {
@@ -233,13 +252,28 @@ const marketController = {
             }
           }
         }
-      } catch (_) {}
-      
+
+        if (!marketExists) {
+          console.error(`[publishQuest] CRITICAL: Market ${quest_key} NOT found on-chain after 5 retries. Reverting DB status to APPROVE.`);
+          await client.QuestDao.UpdateData(quest_key, {
+            quest_status: 'APPROVE',
+            quest_publish_tx: null,
+            quest_publish_datetime: null,
+            quest_pending: false,
+          });
+          return res.status(500).json(err(new ContractInteractionError(
+            'Market not found on-chain after publish transaction. Status reverted to APPROVE. Please retry publishing.'
+          )));
+        }
+      } catch (verifyErr) {
+        console.warn(`[publishQuest] On-chain verification error for ${quest_key}: ${verifyErr.message}. Proceeding with caution.`);
+      }
+
       return res.status(200).json(success('', 'Publish'));
     } catch (e) {
       try {
         await client.QuestDao.UpdateData(quest_key, { quest_pending: false });
-      } catch (_) {}
+      } catch (_) { }
       return res.status(500).json(err('Transaction success but DB Update Failed'));
     }
   },
@@ -248,26 +282,26 @@ const marketController = {
     const { quest_key } = req.params;
     let receipt;
     const updateInfo = {};
-    
+
     try {
       await client.QuestDao.OnPending(quest_key);
     } catch (e) {
       return sendErrorResponse(e, res);
     }
-    
+
     const quest = await BaseQuestDaoController.getQuestWithValidation(quest_key);
-    
+
     try {
       await ensureAdminBalance(2e6);
       receipt = await solanaTxService.adjournMarket(quest_key);
     } catch (e) {
       const timeoutHandler = async (error, errorInfo, questKey) => {
-        await client.QuestDao.UpdateData(questKey, { 
-          quest_adjourn_tx: error.transactionHash || errorInfo.originalError?.transactionHash 
+        await client.QuestDao.UpdateData(questKey, {
+          quest_adjourn_tx: error.transactionHash || errorInfo.originalError?.transactionHash
         });
       };
-      return handleControllerError(e, res, { 
-        questKey: quest_key, 
+      return handleControllerError(e, res, {
+        questKey: quest_key,
         onTimeout: timeoutHandler,
       });
     }
@@ -290,7 +324,7 @@ const marketController = {
     let answer_key;
     let receipt;
     let updateInfo = {};
-    
+
     try {
       answer_key = await solanaTxService.getSelectedAnswerKey(quest_key);
     } catch (e) {
@@ -304,7 +338,7 @@ const marketController = {
 
     try {
       const answerKeyStr = typeof answer_key === 'object' && answer_key?.toString ? answer_key.toString() : String(answer_key);
-      
+
       let isZero = answer_key.isZero ? answer_key.isZero() : (answerKeyStr === '0' || answerKeyStr === '');
       if (isZero) {
         try {
@@ -318,7 +352,7 @@ const marketController = {
             answer_key = ar;
             isZero = false;
           }
-        } catch (_) {}
+        } catch (_) { }
       }
       if (isZero) {
         return res.status(400).json(err(new AnswerInvalid('Answer is not selected yet')));
@@ -329,8 +363,8 @@ const marketController = {
           { answer_selected: true },
           { where: { answer_key: answerKeyStr } }
         );
-      } catch (_) {}
-      
+      } catch (_) { }
+
       await client.Answer.isSelected(answerKeyStr);
       await client.QuestDao.OnPending(quest_key);
     } catch (e) {
@@ -363,12 +397,12 @@ const marketController = {
       receipt = await solanaTxService.successMarket(quest_key, answerKeyStr);
     } catch (e) {
       const timeoutHandler = async (error, errorInfo, questKey) => {
-        await client.QuestDao.UpdateData(questKey, { 
-          quest_success_tx: error.transactionHash || errorInfo.originalError?.transactionHash 
+        await client.QuestDao.UpdateData(questKey, {
+          quest_success_tx: error.transactionHash || errorInfo.originalError?.transactionHash
         });
       };
-      return handleControllerError(e, res, { 
-        questKey: quest_key, 
+      return handleControllerError(e, res, {
+        questKey: quest_key,
         onTimeout: timeoutHandler,
       });
     }
@@ -394,7 +428,7 @@ const marketController = {
     const { quest_key } = req.params;
     let receipt;
     const quest = await BaseQuestDaoController.getQuestWithValidation(quest_key);
-    
+
     try {
       await ensureAdminBalance(2e6);
       receipt = await solanaTxService.retrieveTokens(quest_key);
@@ -408,13 +442,13 @@ const marketController = {
       return res.status(200).json(success('', 'Retrieved token'));
     } catch (e) {
       const timeoutHandler = async (error, errorInfo, questKey) => {
-        await client.QuestDao.UpdateData(questKey, { 
-          quest_retrieve_tx: error.transactionHash || errorInfo.originalError?.transactionHash, 
-          quest_pending: 1 
+        await client.QuestDao.UpdateData(questKey, {
+          quest_retrieve_tx: error.transactionHash || errorInfo.originalError?.transactionHash,
+          quest_pending: 1
         });
       };
-      return handleControllerError(e, res, { 
-        questKey: quest_key, 
+      return handleControllerError(e, res, {
+        questKey: quest_key,
         onTimeout: timeoutHandler,
       });
     }

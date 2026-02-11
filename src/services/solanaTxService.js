@@ -109,12 +109,10 @@ class SolanaTransactionService {
         errorInfo.name === 'BlockhashExpired' ||
         error.message?.includes('block height exceeded')
       ) {
-        return {
-          success: false,
-          error: 'Transaction timeout',
-          transactionHash: null,
-          errorInfo,
-        };
+        const timeoutError = new Error('Transaction timeout');
+        timeoutError.transactionHash = null;
+        timeoutError.errorInfo = errorInfo;
+        throw timeoutError;
       }
 
       throw {

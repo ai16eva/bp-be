@@ -43,6 +43,7 @@ async function sendSignedTransaction(transaction) {
     return {
       success: true,
       signature,
+      transactionHash: signature,
       transaction
     };
 
